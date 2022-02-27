@@ -1,8 +1,9 @@
 {
-  "name": "greenlight-utils",
+  "name": "@greenlight-coop/greenlight-utils",
   "version": "0.1.0",
   "description": "Shared Node.js module for common production code",
-  "main": "index.js",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
     "build": "npm run tsc",
     "build-clean": "npm run clean && npm run build",
@@ -17,6 +18,9 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/greenlight-coop/greenlight-utils.git"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
   },
   "author": "Green Light Software Cooperative",
   "bugs": {
