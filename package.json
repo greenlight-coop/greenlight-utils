@@ -4,6 +4,11 @@
   "description": "Shared Node.js module for common production code",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "LICENSE",
+    "README.md"
+  ],
   "scripts": {
     "build": "npm run tsc",
     "build-clean": "npm run clean && npm run build",
