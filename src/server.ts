@@ -1,7 +1,7 @@
 import { Application } from 'express'
 import { Logger } from 'winston'
 
-export default function listen(app: Application, logger: Logger): void {
+export function listen(app: Application, logger: Logger): void {
   const server = app.listen(8080)
 
   function close(signal: number) {
