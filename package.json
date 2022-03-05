@@ -40,6 +40,6 @@
     "winston": "^3.6.0"
   },
   "devDependencies": {
-    "@greenlight-coop/greenlight-dev": "^0.1.0"
+    "@greenlight-coop/greenlight-dev": "^0.1.1"
   }
 }
