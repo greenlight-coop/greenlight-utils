@@ -24,16 +24,29 @@ describe('logger', () => {
     spy.mockRestore()
   })
 
-  test('should log stdout', () => {
+  function getLogged() {
+    return JSON.parse(spy.mock.calls[0][0])
+  }
+
+  test('should log to stdout', () => {
     logger.info(TEST_MESSAGE)
     expect(spy).toHaveBeenCalledTimes(1)
   })
 
   test('should log expected fields', () => {
     logger.info(TEST_MESSAGE)
-    const logged = JSON.parse(spy.mock.calls[0][0])
+    const logged = getLogged()
     expect(logged.timestamp).toMatch(TIMESTAMP_REGEX)
     expect(logged.level).toBe('info')
     expect(logged.message).toBe(TEST_MESSAGE)
   })
+
+  test.each(['error', 'warn', 'info'])(
+    'should output %s level messages',
+    (level) => {
+      ;(logger as any)[level](TEST_MESSAGE)
+      const logged = getLogged()
+      expect(logged.level).toBe(level)
+    }
+  )
 })
