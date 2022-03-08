@@ -4,12 +4,19 @@ import { Logger } from 'winston'
 
 import { ExpressContext } from './ExpressContext'
 
+enum HttpMethod {
+  GET,
+  POST,
+  PUT,
+  DELETE
+}
+
 export interface Context {
   traceId?: string
 }
 
 export interface Handler {
-  method?: string
+  method?: HttpMethod
   path?: string
   callback: (body: object, context: Context) => void | string | object
 }
