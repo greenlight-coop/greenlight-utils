@@ -1,6 +1,0 @@
-.eslintrc.json              
-.npmrc
-.nvmrc                 
-.prettierrc.json
-jest.config.js
-test/

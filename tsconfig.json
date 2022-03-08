@@ -1,3 +1,13 @@
 {
-  "extends": "@greenlight-coop/greenlight-dev/tsconfig.json"
+  "extends": "@greenlight-coop/greenlight-dev/tsconfig.json",
+
+  "compilerOptions": {
+    "outDir": "dist"
+  },
+  
+  "exclude": [
+    "test",
+    "dist",
+    "node_modules"
+  ]
 }
