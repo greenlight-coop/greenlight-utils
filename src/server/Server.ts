@@ -4,7 +4,7 @@ import { Logger } from 'winston'
 
 import { ExpressContext } from './ExpressContext'
 
-enum HttpMethod {
+export enum HttpMethod {
   GET,
   POST,
   PUT,
