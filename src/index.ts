@@ -1,2 +1,2 @@
 export { logger } from './logger'
-export { listen } from './server'
+export { makeServer } from './server'
