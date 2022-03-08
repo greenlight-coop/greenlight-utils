@@ -31,7 +31,26 @@ export class Server {
       const context = new ExpressContext(request)
       response.send(handler.callback(request.body, context))
     }
-    this.app.all(handler.path ? handler.path : '/', expressCallback)
+    const path = handler.path ? handler.path : '/'
+    switch (handler.method) {
+      case undefined:
+        this.app.all(path, expressCallback)
+        break
+      case HttpMethod.DELETE:
+        this.app.delete(path, expressCallback)
+        break
+      case HttpMethod.GET:
+        this.app.get(path, expressCallback)
+        break
+      case HttpMethod.POST:
+        this.app.post(path, expressCallback)
+        break
+      case HttpMethod.PUT:
+        this.app.put(path, expressCallback)
+        break
+      default:
+        throw new Error(`Method ${handler.method} not supported`)
+    }
   }
 
   private close(signal: number) {
