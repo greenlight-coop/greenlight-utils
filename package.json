@@ -17,7 +17,7 @@
     "lint": "eslint --ext ts --config .eslintrc.json .",
     "lint:fix": "npm run lint -- --fix",
     "qc": "npm run lint && npm audit && npm run check-types && npm test",
-    "test": "jest",
+    "test": "c8 --all --src src --exclude **/*.spec.ts --reporter text --reporter html jest",
     "tsc": "tsc"
   },
   "repository": {
@@ -45,7 +45,7 @@
     "winston": "^3.6.0"
   },
   "devDependencies": {
-    "@greenlight-coop/greenlight-dev": "0.1.8"
+    "@greenlight-coop/greenlight-dev": "0.1.9"
   },
   "prettier": "@greenlight-coop/prettier-config-greenlight"
 }
