@@ -1,9 +1,14 @@
-import { createLogger, format, transports } from 'winston'
+import { createLogger, format, Logger, transports } from 'winston'
 
 const { combine, timestamp, json } = format
 
-export const logger = createLogger({
-  level: 'info',
-  format: combine(timestamp(), json()),
-  transports: [new transports.Console()]
-})
+export function getLogger(): Logger {
+  return createLogger({
+    level:
+      (process.env?.DEBUG ?? 'false').toLowerCase() === 'true'
+        ? 'debug'
+        : 'info',
+    format: combine(timestamp(), json()),
+    transports: [new transports.Console()]
+  })
+}
