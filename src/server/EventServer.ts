@@ -1,5 +1,5 @@
 import { CloudEventV1, HTTP } from 'cloudevents'
-import { Application, NextFunction, Request, Response } from 'express'
+import { Application, Request, Response } from 'express'
 import { Logger } from 'winston'
 
 import { AbstractServer } from './AbstractServer'
