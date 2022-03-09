@@ -2,9 +2,9 @@
 import { CloudEvent, HTTP } from 'cloudevents'
 import request from 'supertest'
 
-import { getLogger } from '../../src/logger'
-import { EventServer } from '../../src/server/EventServer'
-import { makeExpress } from '../../src/server/express'
+import { getLogger } from '../logger'
+import { EventServer } from './EventServer'
+import { makeExpress } from './express'
 
 const app = makeExpress()
 const logger = getLogger()

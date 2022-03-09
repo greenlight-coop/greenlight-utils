@@ -1,7 +1,7 @@
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-empty-function */
-import { getLogger } from '../src/logger'
+import { getLogger } from './logger'
 
 process.env.DEBUG = 'true'
 
