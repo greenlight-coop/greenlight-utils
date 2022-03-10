@@ -82,4 +82,8 @@ describe('HttpServer', () => {
         .expect(StatusCodes.INTERNAL_SERVER_ERROR)
     })
   })
+
+  test('exposes a health endpoint', async () => {
+    await testRequest(app).get('/health').send().expect(StatusCodes.OK)
+  })
 })

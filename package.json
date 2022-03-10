@@ -39,6 +39,7 @@
     "@types/node": "^16.11.25",
     "cloudevents": "^5.3.2",
     "express": "^4.17.3",
+    "express-actuator": "^1.8.0",
     "helmet": "^5.0.2",
     "http-errors": "^2.0.0",
     "http-status-codes": "^2.2.0",
@@ -47,7 +48,8 @@
     "winston": "^3.6.0"
   },
   "devDependencies": {
-    "@greenlight-coop/greenlight-dev": "0.1.9"
+    "@greenlight-coop/greenlight-dev": "0.1.9",
+    "@types/express-actuator": "^1.8.0"
   },
   "prettier": "@greenlight-coop/prettier-config-greenlight"
 }
