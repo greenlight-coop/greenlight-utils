@@ -25,7 +25,7 @@ export class EventServer<T> extends AbstractServer {
           throw new TypeError('CloudEvent arrays unsupported')
         }
         await callback(event)
-        response.send()
+        response.end()
         this.logger.debug('Completed event handling', { event })
       } catch (error) {
         this.logger.error('Event handling failed', error)

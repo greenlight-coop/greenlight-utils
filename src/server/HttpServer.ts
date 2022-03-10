@@ -19,7 +19,7 @@ export interface HttpRequest<T> {
 export interface HttpHandler {
   method?: HttpMethod
   path?: string
-  callback: (request: Request) => void | string | object
+  callback: (request: Request, response: Response) => void
 }
 
 export class HttpServer extends AbstractServer {
@@ -29,33 +29,22 @@ export class HttpServer extends AbstractServer {
 
   public register(handler: HttpHandler): void {
     this.logger.debug('Registering', { handler })
-    const expressCallback = (request: Request, response: Response): void => {
-      try {
-        const returnBody = handler.callback(request)
-        this.logger.debug({ returnBody })
-        response.send(returnBody)
-      } catch (error) {
-        this.logger.error(error)
-        throw error
-      }
-    }
-
     const path = handler.path ? handler.path : '/'
     switch (handler.method) {
       case undefined:
-        this.app.all(path, expressCallback)
+        this.app.all(path, handler.callback)
         break
       case HttpMethod.DELETE:
-        this.app.delete(path, expressCallback)
+        this.app.delete(path, handler.callback)
         break
       case HttpMethod.GET:
-        this.app.get(path, expressCallback)
+        this.app.get(path, handler.callback)
         break
       case HttpMethod.POST:
-        this.app.post(path, expressCallback)
+        this.app.post(path, handler.callback)
         break
       case HttpMethod.PUT:
-        this.app.put(path, expressCallback)
+        this.app.put(path, handler.callback)
         break
       default:
         throw new Error(`Method ${handler.method} not supported`)

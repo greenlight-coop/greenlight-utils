@@ -19,7 +19,6 @@ function makeDebugLogging(logger: Logger) {
   }
   return debugLogging
 }
-
 export abstract class AbstractServer {
   private expressServer?: HttpServer
 

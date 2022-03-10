@@ -17,7 +17,7 @@ const event = new CloudEvent({
 const message = HTTP.structured(event)
 
 describe('EventServer', () => {
-  describe('start', () => {
+  describe('constructor', () => {
     test('should add a callback invoked by the framework', async () => {
       let invoked = false
       const callback = () => {
