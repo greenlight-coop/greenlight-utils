@@ -1,13 +1,14 @@
 /* eslint-disable no-new */
 import { CloudEvent, HTTP } from 'cloudevents'
+import { mock } from 'jest-mock-extended'
 import request from 'supertest'
+import { Logger } from 'winston'
 
-import { getLogger } from '../logger'
 import { EventServer } from './EventServer'
 import { makeExpress } from './express'
 
 const app = makeExpress()
-const logger = getLogger()
+const logger = mock<Logger>()
 
 const event = new CloudEvent({
   type: 'type',

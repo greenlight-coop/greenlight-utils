@@ -1,19 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable unicorn/consistent-function-scoping */
-/* eslint-disable no-new */
 import { Application, Request } from 'express'
 import createError from 'http-errors'
 import { StatusCodes } from 'http-status-codes'
+import { mock } from 'jest-mock-extended'
 import testRequest from 'supertest'
 import { Logger } from 'winston'
 
-import { getLogger } from '../logger'
 import { Context } from './AbstractServer'
 import { makeExpress } from './express'
 import { HttpMethod, HttpServer } from './HttpServer'
-
-process.env.DEBUG = 'true'
 
 let app: Application
 let logger: Logger
@@ -27,14 +23,13 @@ describe('HttpServer', () => {
   beforeEach(() => {
     invoked = false
     app = makeExpress()
-    logger = getLogger()
+    logger = mock<Logger>()
     server = new HttpServer(app, logger)
   })
 
   const callback = (request: Request, context: Context): string => {
     expect(request).not.toBeNull()
     expect(context).not.toBeNull()
-    context.logger.info('IN CALLBACK!!!')
     invoked = true
     return TEST_RESPONSE
   }
@@ -61,7 +56,7 @@ describe('HttpServer', () => {
     )
 
     test('should automatically translate an HttpError thrown within callback', async () => {
-      const errorCallback = (request: Request): void => {
+      const errorCallback = (): void => {
         throw createError(StatusCodes.BAD_REQUEST)
       }
       server.register({
@@ -69,14 +64,11 @@ describe('HttpServer', () => {
         path: '/',
         callback: errorCallback
       })
-      const response = await testRequest(app)
-        .get('/')
-        .send()
-        .expect(StatusCodes.BAD_REQUEST)
+      await testRequest(app).get('/').send().expect(StatusCodes.BAD_REQUEST)
     })
 
     test('should automatically translate an error without a status code to an INTERNAL_SERVER_ERROR', async () => {
-      const errorCallback = (request: Request): void => {
+      const errorCallback = (): void => {
         throw new Error('Non-HTTP error')
       }
       server.register({
@@ -84,7 +76,7 @@ describe('HttpServer', () => {
         path: '/',
         callback: errorCallback
       })
-      const response = await testRequest(app)
+      await testRequest(app)
         .get('/')
         .send()
         .expect(StatusCodes.INTERNAL_SERVER_ERROR)
