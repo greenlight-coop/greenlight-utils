@@ -1,2 +1,2 @@
-export { getLogger } from './logger'
-export { makeEventServer, makeHttpServer } from './server'
+export * from './logger'
+export * from './server'
