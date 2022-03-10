@@ -3,6 +3,10 @@ import { Server as HttpServer } from 'http'
 import { pick } from 'lodash'
 import { Logger } from 'winston'
 
+export interface Context {
+  logger: Logger
+}
+
 function makeDebugLogging(logger: Logger) {
   function debugLogging(
     request: Request,
@@ -13,9 +17,6 @@ function makeDebugLogging(logger: Logger) {
       request: pick(request, ['method', 'url', 'headers', 'body'])
     })
     next()
-    logger.debug('Response', {
-      response: pick(response, ['statusCode', 'body'])
-    })
   }
   return debugLogging
 }
