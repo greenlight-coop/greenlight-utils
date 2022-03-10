@@ -3,6 +3,7 @@ import { cloudEventCallback, EventServer } from './EventServer'
 import { makeExpress } from './express'
 import { HttpServer } from './HttpServer'
 
+export { Context } from './AbstractServer'
 export { cloudEventCallback } from './EventServer'
 export { HttpHandler, HttpMethod } from './HttpServer'
 
