@@ -84,6 +84,6 @@ describe('HttpServer', () => {
   })
 
   test('exposes a health endpoint', async () => {
-    await testRequest(app).get('/health').send().expect(StatusCodes.OK)
+    await testRequest(app).get('/healthz').send().expect(StatusCodes.OK)
   })
 })

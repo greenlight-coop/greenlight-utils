@@ -20,11 +20,17 @@ function makeDebugLogging(logger: Logger) {
   }
   return debugLogging
 }
+
 export abstract class AbstractServer {
   private expressServer?: HttpServer
 
   constructor(protected app: Application, protected logger: Logger) {
     this.app.use(makeDebugLogging(this.logger))
+    this.app.get('/healthz', (request, response) =>
+      response.send({
+        status: 'UP'
+      })
+    )
   }
 
   private close(signal: number) {

@@ -49,8 +49,7 @@
     "winston": "^3.6.0"
   },
   "devDependencies": {
-    "@greenlight-coop/greenlight-dev": "0.1.9",
-    "@types/express-actuator": "^1.8.0"
+    "@greenlight-coop/greenlight-dev": "0.1.9"
   },
   "prettier": "@greenlight-coop/prettier-config-greenlight"
 }
