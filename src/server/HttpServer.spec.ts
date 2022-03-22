@@ -27,7 +27,11 @@ describe('HttpServer', () => {
     server = new HttpServer(app, logger)
   })
 
-  const callback = (request: Request, context: Context): string => {
+  const callback = (
+    input: undefined,
+    request: Request,
+    context: Context
+  ): string => {
     expect(request).not.toBeNull()
     expect(context).not.toBeNull()
     invoked = true
@@ -36,7 +40,7 @@ describe('HttpServer', () => {
 
   describe('register', () => {
     test('should add a callback invoked by the framework', async () => {
-      server.register({ method: HttpMethod.GET, path: '/', callback })
+      server.register<undefined, string>({ callback })
       await testRequest(app)
         .get('/')
         .send()

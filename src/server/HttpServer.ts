@@ -1,4 +1,6 @@
 import { Application, Request, Response } from 'express'
+import { StatusCodes } from 'http-status-codes'
+import Joi from 'joi'
 import { Logger } from 'winston'
 
 import { AbstractServer, Context } from './AbstractServer'
@@ -17,20 +19,35 @@ export interface HttpRequest<T> {
   body: T
 }
 
-export interface HttpHandler {
+export interface HttpHandler<I, O> {
   method?: HttpMethod
   path?: string
-  callback: (request: Request, context: Context) => void | string | object
+  schema?: Joi.Schema<I>
+  callback: (input: I, request: Request, context: Context) => O
 }
 
 type ServerError = Error & { status?: number }
+function makeExpressCallback<I, O>(handler: HttpHandler<I, O>, logger: Logger) {
+  function validate(request: Request, schema: Joi.Schema<I>) {
+    logger.debug('Validating...')
+    try {
+      Joi.assert(request.body, schema, { abortEarly: false })
+    } catch (error) {
+      const serverError = error as ServerError
+      serverError.status = StatusCodes.BAD_REQUEST
+      throw serverError
+    }
+  }
 
-function makeExpressCallback(handler: HttpHandler, logger: Logger) {
   function expressCallback(request: Request, response: Response): void {
     try {
       logger.debug('In callback')
       const context = new ServerContext(logger)
-      const returnBody = handler.callback(request, context)
+      if (handler.schema) {
+        validate(request, handler.schema)
+      }
+      const input = request.body as I
+      const returnBody = handler.callback(input, request, context)
       if (returnBody) {
         logger.debug('callback returned', { returnBody })
         response.send(returnBody)
@@ -54,7 +71,7 @@ export class HttpServer extends AbstractServer {
     super(app, logger)
   }
 
-  public register(handler: HttpHandler): void {
+  public register<I, O>(handler: HttpHandler<I, O>): void {
     this.logger.debug('Registering', { handler })
     const expressCallback = makeExpressCallback(handler, this.logger)
 
