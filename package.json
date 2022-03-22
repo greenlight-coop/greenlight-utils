@@ -37,7 +37,7 @@
     "@types/http-errors": "^1.8.2",
     "@types/lodash": "^4.14.180",
     "@types/node": "^16.11.26",
-    "cloudevents": "^5.3.2",
+    "cloudevents": "^6.0.1",
     "express": "^4.17.3",
     "helmet": "^5.0.2",
     "http-errors": "^2.0.0",
@@ -48,7 +48,7 @@
     "winston": "^3.6.0"
   },
   "devDependencies": {
-    "@greenlight-coop/greenlight-dev": "^0.1.10"
+    "@greenlight-coop/greenlight-dev": "^0.1.11"
   },
   "prettier": "@greenlight-coop/prettier-config-greenlight"
 }
