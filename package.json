@@ -16,8 +16,9 @@
     "clean": "npx rimraf dist coverage",
     "lint": "eslint --ext ts --config .eslintrc.json .",
     "lint:fix": "npm run lint -- --fix",
-    "qc": "npm run lint && npm audit && npm run check-types && npm test",
-    "test": "c8 --check-coverage --lines 90 --functions 90 --branches 80 --src src --exclude **/*.spec.ts --reporter text --reporter html jest",
+    "qc": "npm run lint && npm audit && npm run check-types && npm run test:coverage",
+    "test": "jest",
+    "test:coverage": "jest --coverage",
     "tsc": "tsc"
   },
   "repository": {
@@ -50,7 +51,7 @@
     "winston": "^3.6.0"
   },
   "devDependencies": {
-    "@greenlight-coop/greenlight-dev": "^0.1.11"
+    "@greenlight-coop/greenlight-dev": "^0.1.12"
   },
   "prettier": "@greenlight-coop/prettier-config-greenlight"
 }
