@@ -1,4 +1,6 @@
 import { Application, Request, Response } from 'express'
+import { StatusCodes } from 'http-status-codes'
+import Joi from 'joi'
 import { Logger } from 'winston'
 
 import { AbstractServer, Context } from './AbstractServer'
@@ -17,36 +19,66 @@ export interface HttpRequest<T> {
   body: T
 }
 
-export interface HttpHandler {
+export interface HttpHandler<I, O> {
   method?: HttpMethod
   path?: string
-  callback: (request: Request, context: Context) => void | string | object
+  schema?: Joi.Schema<I>
+  callback: (input: I, request: Request, context: Context) => O
 }
 
 type ServerError = Error & { status?: number }
-
-function makeExpressCallback(handler: HttpHandler, logger: Logger) {
-  function expressCallback(request: Request, response: Response): void {
+function makeExpressCallback<I, O>(handler: HttpHandler<I, O>, logger: Logger) {
+  function validate(request: Request, schema: Joi.Schema<I>) {
+    logger.debug('Validating...')
     try {
-      logger.debug('In callback')
-      const context = new ServerContext(logger)
-      const returnBody = handler.callback(request, context)
-      if (returnBody) {
-        logger.debug('callback returned', { returnBody })
-        response.send(returnBody)
-      } else {
-        logger.debug('callback return is void')
-        response.end()
-      }
+      Joi.assert(request.body, schema, {
+        abortEarly: false,
+        errors: { stack: false }
+      })
     } catch (error) {
       const serverError = error as ServerError
-      if (!serverError.status || serverError.status >= 500) {
-        logger.error('Error during callback', error)
-      }
-      throw error
+      serverError.status = StatusCodes.BAD_REQUEST
+      throw serverError
+    }
+  }
+
+  function expressCallback(request: Request, response: Response): void {
+    logger.debug('In callback')
+    const context = new ServerContext(logger)
+    if (handler.schema) {
+      validate(request, handler.schema)
+    }
+    const input = request.body as I
+    const returnBody = handler.callback(input, request, context)
+    if (returnBody) {
+      logger.debug('callback returned', { returnBody })
+      response.send(returnBody)
+    } else {
+      logger.debug('callback return is void')
+      response.end()
     }
   }
   return expressCallback
+}
+
+function makeErrorHandler(logger: Logger) {
+  return function errorHandler(
+    error: Error,
+    request: Request,
+    response: Response,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    next: (argument0: Error) => void
+  ): void {
+    const serverError = error as ServerError
+    if (serverError.status === StatusCodes.BAD_REQUEST) {
+      response.status(StatusCodes.BAD_REQUEST)
+      response.send(serverError.toString())
+    } else {
+      logger.error('error in callback:', serverError)
+      response.status(StatusCodes.INTERNAL_SERVER_ERROR)
+      response.send('Internal Server Error')
+    }
+  }
 }
 
 export class HttpServer extends AbstractServer {
@@ -54,7 +86,7 @@ export class HttpServer extends AbstractServer {
     super(app, logger)
   }
 
-  public register(handler: HttpHandler): void {
+  public register<I, O>(handler: HttpHandler<I, O>): void {
     this.logger.debug('Registering', { handler })
     const expressCallback = makeExpressCallback(handler, this.logger)
 
@@ -78,5 +110,6 @@ export class HttpServer extends AbstractServer {
       default:
         throw new Error(`Method ${handler.method} not supported`)
     }
+    this.app.use(makeErrorHandler(this.logger))
   }
 }
