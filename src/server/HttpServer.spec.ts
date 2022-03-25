@@ -36,6 +36,7 @@ const SIMPLE_TEST_RESPONSE = 'test response'
 const INPUT_TEST_RESPONSE = 'input test response'
 
 let invoked: boolean
+process.env.NODE_ENV = 'production'
 
 describe('HttpServer', () => {
   beforeEach(() => {
@@ -126,8 +127,22 @@ describe('HttpServer', () => {
       })
       await testRequest(app)
         .get('/')
-        .send({ ...TEST_INPUT, id: 'not a uuid' })
+        .send({ id: 'bad id' })
         .expect(StatusCodes.BAD_REQUEST)
+    })
+
+    test('should return validation information on a BAD_REQUEST', async () => {
+      server.register<Input, string>({
+        schema: inputSchema,
+        callback: callbackWithInput
+      })
+      const response = await testRequest(app)
+        .get('/')
+        .send({ id: 'bad id' })
+        .expect(StatusCodes.BAD_REQUEST)
+      expect(response.text).toContain('must be a valid GUID')
+      expect(response.text).toContain('is required')
+      expect(response.text).not.toContain('HttpServer')
     })
 
     test('should automatically translate an HttpError thrown within callback', async () => {
@@ -157,7 +172,20 @@ describe('HttpServer', () => {
         .expect(StatusCodes.INTERNAL_SERVER_ERROR)
     })
 
-    test.todo('should strip any data from an INTERNAL_SERVER_ERROR')
+    test('should strip any data from an INTERNAL_SERVER_ERROR', async () => {
+      const sensitiveInformation = 'sensitive'
+      const errorCallback = (): void => {
+        throw new Error(sensitiveInformation)
+      }
+      server.register({
+        method: HttpMethod.GET,
+        path: '/',
+        callback: errorCallback
+      })
+      const response = await testRequest(app).get('/')
+      expect(response.text).not.toContain(sensitiveInformation)
+      expect(response.text).not.toContain('HttpServer')
+    })
   })
 
   test('exposes a health endpoint', async () => {

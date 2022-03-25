@@ -5,7 +5,7 @@ module.exports = {
       branches: 80,
       // functions: 90,
       // lines: 90
-      functions: 85,  // restore lines above when met
+      functions: 85, // restore lines above when met
       lines: 85
     }
   },
