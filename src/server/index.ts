@@ -5,7 +5,7 @@ import { HttpServer } from './HttpServer'
 
 export { Context } from './AbstractServer'
 export { cloudEventCallback } from './EventServer'
-export { HttpHandler, HttpMethod } from './HttpServer'
+export { HttpBodyHandler as HttpHandler, HttpMethod } from './HttpServer'
 
 export function makeEventServer<T>(
   callback: cloudEventCallback<T>

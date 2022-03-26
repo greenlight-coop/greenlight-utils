@@ -4,6 +4,7 @@ import { pick } from 'lodash'
 import { Logger } from 'winston'
 
 export interface Context {
+  request: Request
   logger: Logger
 }
 
