@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable unicorn/consistent-function-scoping */
 import { Application } from 'express'
 import createError from 'http-errors'
