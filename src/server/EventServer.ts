@@ -24,7 +24,7 @@ export class EventServer<T> extends AbstractServer {
     return async (request: Request, response: Response): Promise<void> => {
       try {
         const event = HTTP.toEvent<T>(request)
-        const context = new ServerContext(logger)
+        const context = new ServerContext(request, logger)
         this.logger.debug('Handling event', { event })
         if (Array.isArray(event)) {
           throw new TypeError('CloudEvent arrays unsupported')

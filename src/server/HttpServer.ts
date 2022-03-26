@@ -13,21 +13,24 @@ export enum HttpMethod {
   DELETE = 'DELETE'
 }
 
-export interface HttpRequest<T> {
+export interface HttpHandler<O> {
   method?: HttpMethod
   path?: string
-  body: T
+  callback: (context: Context) => O
 }
 
-export interface HttpHandler<I, O> {
+export interface HttpBodyHandler<I, O> {
   method?: HttpMethod
   path?: string
-  schema?: Joi.Schema<I>
-  callback: (input: I, request: Request, context: Context) => O
+  schema: Joi.Schema<I>
+  callback: (input: I, context: Context) => O
 }
 
 type ServerError = Error & { status?: number }
-function makeExpressCallback<I, O>(handler: HttpHandler<I, O>, logger: Logger) {
+function makeExpressCallback<I, O>(
+  handler: HttpBodyHandler<I, O>,
+  logger: Logger
+) {
   function validate(request: Request, schema: Joi.Schema<I>) {
     logger.debug('Validating...')
     try {
@@ -44,12 +47,10 @@ function makeExpressCallback<I, O>(handler: HttpHandler<I, O>, logger: Logger) {
 
   function expressCallback(request: Request, response: Response): void {
     logger.debug('In callback')
-    const context = new ServerContext(logger)
-    if (handler.schema) {
-      validate(request, handler.schema)
-    }
+    const context = new ServerContext(request, logger)
+    validate(request, handler.schema)
     const input = request.body as I
-    const returnBody = handler.callback(input, request, context)
+    const returnBody = handler.callback(input, context)
     if (returnBody) {
       logger.debug('callback returned', { returnBody })
       response.send(returnBody)
@@ -66,6 +67,7 @@ function makeErrorHandler(logger: Logger) {
     error: Error,
     request: Request,
     response: Response,
+    // full signature required to register error handler
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     next: (argument0: Error) => void
   ): void {
@@ -81,14 +83,33 @@ function makeErrorHandler(logger: Logger) {
   }
 }
 
+function toBodyHandler<O>(
+  handler: HttpHandler<O>
+): HttpBodyHandler<undefined, O> {
+  return {
+    ...handler,
+    schema: Joi.object<undefined>(),
+    callback: (input: undefined, context: Context) => handler.callback(context)
+  }
+}
+
+function isHttpBodyHandler<I, O>(
+  handler: HttpHandler<O> | HttpBodyHandler<I, O>
+): handler is HttpBodyHandler<I, O> {
+  return (handler as HttpBodyHandler<I, O>).schema !== undefined
+}
+
 export class HttpServer extends AbstractServer {
   constructor(app: Application, logger: Logger) {
     super(app, logger)
   }
 
-  public register<I, O>(handler: HttpHandler<I, O>): void {
+  public register<I, O>(handler: HttpHandler<O> | HttpBodyHandler<I, O>): void {
     this.logger.debug('Registering', { handler })
-    const expressCallback = makeExpressCallback(handler, this.logger)
+    const bodyHandler = isHttpBodyHandler(handler)
+      ? handler
+      : (toBodyHandler(handler) as unknown as HttpBodyHandler<I, O>)
+    const expressCallback = makeExpressCallback(bodyHandler, this.logger)
 
     const path = handler.path ? handler.path : '/'
     switch (handler.method) {

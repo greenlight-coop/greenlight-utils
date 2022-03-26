@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable unicorn/consistent-function-scoping */
-import { Application, Request } from 'express'
+import { Application } from 'express'
 import createError from 'http-errors'
 import { StatusCodes } from 'http-status-codes'
 import { mock } from 'jest-mock-extended'
@@ -46,25 +46,17 @@ describe('HttpServer', () => {
     server = new HttpServer(app, logger)
   })
 
-  const simpleCallback = (
-    input: undefined,
-    request: Request,
-    context: Context
-  ): string => {
-    expect(request).not.toBeNull()
+  const simpleCallback = (context: Context): string => {
     expect(context).not.toBeNull()
+    expect(context.request).not.toBeNull()
     invoked = true
     return SIMPLE_TEST_RESPONSE
   }
 
-  const callbackWithInput = (
-    input: Input,
-    request: Request,
-    context: Context
-  ): string => {
+  const callbackWithInput = (input: Input, context: Context): string => {
     expect(input).toEqual(TEST_INPUT)
-    expect(request).not.toBeNull()
     expect(context).not.toBeNull()
+    expect(context.request).not.toBeNull()
     invoked = true
     return INPUT_TEST_RESPONSE
   }
@@ -97,6 +89,7 @@ describe('HttpServer', () => {
       })
       server.register<Input, string>({
         path: '/input',
+        schema: inputSchema,
         callback: callbackWithInput
       })
       await testRequest(app).get('/simple').send().expect(SIMPLE_TEST_RESPONSE)
