@@ -13,6 +13,7 @@ import { Logger } from 'winston'
 import { loggerModule } from '../logger'
 import { SchemaValidationError } from '../validation'
 import { makeExpress } from './express'
+import { getStoplightContent } from './stoplight-content'
 
 const SERVICE_HTTP_PORT = 8080
 
@@ -98,13 +99,13 @@ export class HttpServer {
     decorate(injectable(), Controller)
 
     this.logger = config.container.get('Logger')
+    this.app.use(makeErrorHandler(this.logger))
     this.app.use(makeDebugLogging(this.logger))
     this.app.route('/healthz').get((request, response) => response.send('UP'))
     if (config.registerRoutes) {
       this.app.route('/openapi').get(makeGetOpenApi(config.openApiSpec))
-      this.app.use('/docs', express.static('static/openapi'))
+      this.app.route('/docs').get(getStoplightContent)
       config.registerRoutes(this.app)
-      this.app.use(makeErrorHandler(this.logger))
     }
   }
 

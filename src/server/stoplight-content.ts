@@ -1,4 +1,6 @@
-<!doctype html>
+import { NextFunction, Request, Response } from 'express'
+
+const content = `<!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8">
@@ -16,4 +18,13 @@
     />
 
   </body>
-</html>
+</html>`
+
+export function getStoplightContent(
+  request: Request,
+  response: Response,
+  next: NextFunction
+): void {
+  response.send(content)
+  next()
+}
