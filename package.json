@@ -61,7 +61,7 @@
     "winston": "^3.8.1"
   },
   "devDependencies": {
-    "@greenlight-coop/greenlight-dev": "^0.1.20"
+    "@greenlight-coop/greenlight-dev": "^0.1.21"
   },
   "prettier": "@greenlight-coop/prettier-config-greenlight"
 }
