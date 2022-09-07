@@ -101,6 +101,7 @@ export class HttpServer {
 
     this.logger = config.container.get('Logger')
     this.app.use(makeDebugLogging(this.logger))
+    this.app.route('/healthz').get((request, response) => response.send('UP'))
     if (config.registerRoutes) {
       this.app.route('/openapi').get(makeGetOpenApi(config.openApiSpec))
       this.app.use('/docs', express.static('static/openapi'))
