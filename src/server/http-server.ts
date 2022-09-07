@@ -1,7 +1,5 @@
 /* istanbul ignore file */
 
-import './health-controller'
-
 import { Application, NextFunction, Request, Response } from 'express'
 import * as express from 'express'
 import { Server as ExpressServer } from 'http'
