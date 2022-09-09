@@ -13,7 +13,7 @@ const content = `<!doctype html>
   <body>
 
     <elements-api
-      apiDescriptionUrl="../openapi"
+      apiDescriptionUrl="./../openapi"
       router="hash"
     />
 
