@@ -3,6 +3,7 @@ import { Logger } from 'winston'
 
 export function makeGetStoplightContent(
   openApiSpec: Record<string, unknown>,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   logger: Logger
 ): (request: Request, response: Response, next: NextFunction) => void {
   return function getStoplightContent(
@@ -10,14 +11,10 @@ export function makeGetStoplightContent(
     response: Response,
     next: NextFunction
   ): void {
-    logger.debug('Headers', { headers: request.headers })
-
     const { referer } = request.headers
     const basePath = referer
       ? referer.slice(0, Math.max(0, referer.lastIndexOf('/docs')))
-      : '.'
-
-    logger.debug(`basePath: ${basePath}`)
+      : '..'
 
     const content = `<!doctype html>
       <html lang="en">
@@ -32,7 +29,7 @@ export function makeGetStoplightContent(
         <body>
 
           <elements-api
-            apiDescriptionDocument="${openApiSpec}"
+            apiDescriptionDocument="${JSON.stringify(openApiSpec)}"
             basePath="${basePath}"
             router="hash"
           />
