@@ -1,3 +1,4 @@
+/* eslint-disable quotes */
 import { NextFunction, Request, Response } from 'express'
 import { Logger } from 'winston'
 
@@ -11,11 +12,6 @@ export function makeGetStoplightContent(
     response: Response,
     next: NextFunction
   ): void {
-    const { referer } = request.headers
-    const basePath = referer
-      ? referer.slice(0, Math.max(0, referer.lastIndexOf('/docs')))
-      : '..'
-
     const content = `<!doctype html>
       <html lang="en">
         <head>
@@ -29,8 +25,11 @@ export function makeGetStoplightContent(
         <body>
 
           <elements-api
-            apiDescriptionDocument="${JSON.stringify(openApiSpec)}"
-            basePath="${basePath}"
+            apiDescriptionDocument='${JSON.stringify(openApiSpec).replaceAll(
+              "'",
+              '&#39;'
+            )}'
+            basePath=".."
             router="hash"
           />
 
