@@ -13,7 +13,7 @@ import { Logger } from 'winston'
 import { loggerModule } from '../logger'
 import { SchemaValidationError } from '../validation'
 import { makeExpress } from './express'
-import { getStoplightContent } from './stoplight-content'
+import { makeGetStoplightContent } from './stoplight-content'
 
 const SERVICE_HTTP_PORT = 8080
 
@@ -104,7 +104,9 @@ export class HttpServer {
     this.app.route('/healthz').get((request, response) => response.send('UP'))
     if (config.registerRoutes) {
       this.app.route('/openapi').get(makeGetOpenApi(config.openApiSpec))
-      this.app.route('/docs').get(getStoplightContent)
+      this.app
+        .route('/docs')
+        .get(makeGetStoplightContent(config.openApiSpec, this.logger))
       config.registerRoutes(this.app)
     }
   }
