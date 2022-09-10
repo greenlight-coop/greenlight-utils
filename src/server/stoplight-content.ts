@@ -1,12 +1,22 @@
 /* eslint-disable quotes */
 import { NextFunction, Request, Response } from 'express'
-import { Logger } from 'winston'
+import { cloneDeep } from 'lodash'
+
+import { getEnvironmentVariable } from '../utils'
+
+const serviceDomain = getEnvironmentVariable('SERVICE_DOMAIN')
+const servicePath = getEnvironmentVariable('SERVICE_PATH')
 
 export function makeGetStoplightContent(
-  openApiSpec: Record<string, unknown>,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  logger: Logger
+  openApiSpec: Record<string, unknown>
 ): (request: Request, response: Response, next: NextFunction) => void {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const updatedSpec: any = cloneDeep(openApiSpec)
+  if (serviceDomain && servicePath) {
+    updatedSpec.servers[0].url = `https://${serviceDomain}${servicePath}`
+  }
+  const stringifiedSpec = JSON.stringify(updatedSpec).replaceAll("'", '&#39;')
+
   return function getStoplightContent(
     request: Request,
     response: Response,
@@ -25,10 +35,7 @@ export function makeGetStoplightContent(
         <body>
 
           <elements-api
-            apiDescriptionDocument='${JSON.stringify(openApiSpec).replaceAll(
-              "'",
-              '&#39;'
-            )}'
+            apiDescriptionDocument='${stringifiedSpec}'
             basePath=".."
             router="hash"
           />

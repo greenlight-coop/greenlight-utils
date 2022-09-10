@@ -104,9 +104,7 @@ export class HttpServer {
     this.app.route('/healthz').get((request, response) => response.send('UP'))
     if (config.registerRoutes) {
       this.app.route('/openapi').get(makeGetOpenApi(config.openApiSpec))
-      this.app
-        .route('/docs')
-        .get(makeGetStoplightContent(config.openApiSpec, this.logger))
+      this.app.route('/docs').get(makeGetStoplightContent(config.openApiSpec))
       config.registerRoutes(this.app)
     }
   }
