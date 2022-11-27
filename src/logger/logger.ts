@@ -3,7 +3,7 @@ import { createLogger, format, Logger, transports } from 'winston'
 
 const { combine, timestamp, json } = format
 
-function makeLogger() {
+export function makeLogger(): Logger {
   return createLogger({
     level:
       (process.env?.DEBUG ?? 'false').toLowerCase() === 'true'
