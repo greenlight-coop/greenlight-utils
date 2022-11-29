@@ -1,6 +1,6 @@
 {
   "name": "@greenlight-coop/greenlight-utils",
-  "version": "0.1.38",
+  "version": "0.1.39",
   "description": "Shared Node.js module for common production code",
   "exports": "./dist/index.js",
   "types": "./dist/index.d.ts",
