@@ -2,8 +2,8 @@
   "name": "@greenlight-coop/greenlight-utils",
   "version": "0.1.37",
   "description": "Shared Node.js module for common production code",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "exports": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "files": [
     "dist",
     "LICENSE",
@@ -64,7 +64,7 @@
     "winston": "^3.8.2"
   },
   "devDependencies": {
-    "@greenlight-coop/greenlight-dev": "^0.1.24"
+    "@greenlight-coop/greenlight-dev": "^0.1.25"
   },
   "prettier": "@greenlight-coop/prettier-config-greenlight"
 }
